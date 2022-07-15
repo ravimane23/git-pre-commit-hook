@@ -1,0 +1,46 @@
+#!/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+#test "" = "$(grep '^Signed-off-by: ' "$1" |
+#	 sort | uniq -c | sed -e '/^[ 	]*1[ 	]/d')" || {
+#	echo >&2 Duplicate Signed-off-by lines.
+#	exit 1
+#}
+
+
+#!/bin/sh
+
+# The below input_file is file ".git/COMMIT_EDITMSG" where commits are stored
+INPUT_FILE=$1
+
+# It will copy the commit string from ".git/COMMIT_EDITMSG"
+START_LINE=`head -n1 $INPUT_FILE`
+
+echo "$START_LINE"
+
+# regex to validate in commit msg
+commit_regex='(QUED-[1-9]+)'
+error_msg="Aborting commit. Your commit message is missing a JIRA Issue ('QUED-11')"
+
+if ! grep -qE "$commit_regex" "$INPUT_FILE"
+then
+    echo "$error_msg" >&2
+    exit 1
+fi
+
