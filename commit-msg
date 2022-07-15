@@ -23,9 +23,6 @@
 #	exit 1
 #}
 
-
-#!/bin/sh
-
 # The below input_file is file ".git/COMMIT_EDITMSG" where commits are stored
 INPUT_FILE=$1
 
@@ -35,8 +32,8 @@ START_LINE=`head -n1 $INPUT_FILE`
 echo "$START_LINE"
 
 # regex to validate in commit msg
-commit_regex='(QUED-[1-9]+)'
-error_msg="Aborting commit. Your commit message is missing a JIRA Issue ('QUED-11')"
+commit_regex='(dev-[1-9]+)'
+error_msg="Aborting commit. Your commit message is missing a JIRA Issue ('dev-11')"
 
 if ! grep -qE "$commit_regex" "$INPUT_FILE"
 then
